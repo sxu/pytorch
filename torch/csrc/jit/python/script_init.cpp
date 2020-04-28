@@ -895,9 +895,9 @@ void initJitScriptBindings(PyObject* module) {
       .def_property_readonly(
           "code",
           [](Module& self) {
-            std::vector<at::Tensor> tensors;
+            std::vector<IValue> constants;
             std::vector<c10::NamedTypePtr> deps;
-            PythonPrint pp(tensors, deps);
+            PythonPrint pp(constants, deps);
             pp.printNamedType(self.type());
             return pp.str();
           })
@@ -999,10 +999,10 @@ void initJitScriptBindings(PyObject* module) {
       .def_property_readonly(
           "code",
           [](const StrongFunctionPtr& self) {
-            std::vector<at::Tensor> tensors;
+            std::vector<IValue> constants;
             std::vector<c10::NamedTypePtr> deps;
 
-            PythonPrint pp(tensors, deps);
+            PythonPrint pp(constants, deps);
             pp.printFunction(*self.function_);
             return pp.str();
           })
@@ -1042,9 +1042,9 @@ void initJitScriptBindings(PyObject* module) {
           "schema", [](Method& m) { return m.function().getSchema(); })
       .def_property_readonly("name", &Method::name)
       .def_property_readonly("code", [](Method& self) {
-        std::vector<at::Tensor> tensors;
+        std::vector<IValue> constants;
         std::vector<c10::NamedTypePtr> deps;
-        PythonPrint pp(tensors, deps);
+        PythonPrint pp(constants, deps);
         pp.printMethod(self.function());
         return pp.str();
       });
