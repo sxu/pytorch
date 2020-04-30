@@ -268,6 +268,13 @@ class QLinearInt8 final {
           (uint8_t*)qnnp_w_data,
           (int32_t*)bias.data_ptr<c10::qint32>());
       packB = pack_ptr.w.get();
+#ifdef C10_MOBILE
+      // On mobile, we release the original weight by freeing the underlying storage.
+      // Calling unpack after this will throw an assertion.
+      pack_ptr.orig_weight.unsafeGetTensorImpl()->release_resources();
+      // Update the size of tensor to reflect freed storage.
+      pack_ptr.orig_weight.resize_(0);
+#endif
     }
 
     size_t rows_input = 1;
